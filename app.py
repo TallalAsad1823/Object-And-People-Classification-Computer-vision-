@@ -24,14 +24,14 @@ def predict_image(img, conf_threshold, iou_threshold):
 
     return im
 
-def predict_video(video, conf_threshold, iou_threshold):
+def predict_video(video_path, conf_threshold, iou_threshold):
     """Predicts objects in a video using a YOLOv8 model with adjustable confidence and IOU thresholds."""
     # Create a temporary file to save the processed video
     temp_output = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
     temp_output.close()
 
     # Load video
-    cap = cv2.VideoCapture(video)
+    cap = cv2.VideoCapture(video_path)
 
     # Get video properties
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -69,22 +69,28 @@ def predict_video(video, conf_threshold, iou_threshold):
 
     return temp_output.name
 
-# Create a Gradio interface with support for both images and videos
+def process_input(input_file, conf_threshold, iou_threshold, mode):
+    """Handles both image and video inference based on the selected mode."""
+    if mode == "Image":
+        return predict_image(input_file, conf_threshold, iou_threshold)
+    elif mode == "Video":
+        return predict_video(input_file.name, conf_threshold, iou_threshold)
+
+# Create Gradio interface
 iface = gr.Interface(
-    fn=lambda img, conf_threshold, iou_threshold, is_video: predict_video(img, conf_threshold, iou_threshold) if is_video else predict_image(img, conf_threshold, iou_threshold),
+    fn=process_input,
     inputs=[
-        gr.Video(type="file", optional=True, label="Upload Video"),
-        gr.Image(type="pil", optional=True, label="Upload Image"),
+        gr.File(label="Upload Image or Video File"),  # Use a generic File input for both image and video
         gr.Slider(minimum=0, maximum=1, value=0.25, label="Confidence threshold"),
         gr.Slider(minimum=0, maximum=1, value=0.45, label="IoU threshold"),
-        gr.Checkbox(label="Is Video?", default=False),
+        gr.Radio(choices=["Image", "Video"], label="Select Mode", value="Image"),
     ],
-    outputs=gr.Image(type="pil", label="Result") if not gr.Checkbox else gr.Video(type="file", label="Result"),
+    outputs=gr.Image(type="pil", label="Result") if gr.Radio else gr.Video(type="file", label="Result"),
     title="Ultralytics Gradio Application 🚀",
     description="Upload images or videos for inference. The Ultralytics YOLOv8n model is used by default.",
     examples=[
-        [ASSETS / "bus.jpg", 0.25, 0.45, False],
-        [ASSETS / "zidane.jpg", 0.25, 0.45, False],
+        [ASSETS / "bus.jpg", 0.25, 0.45, "Image"],
+        [ASSETS / "zidane.jpg", 0.25, 0.45, "Image"],
     ],
 )
 
