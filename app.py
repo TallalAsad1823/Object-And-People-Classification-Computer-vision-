@@ -38,4 +38,4 @@ iface = gr.Interface(
         [ASSETS / "zidane.jpg", 0.25, 0.45],
     ],
 )
-iface.launch()
+iface.launch(share=True)
