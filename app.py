@@ -31,7 +31,7 @@ iface = gr.Interface(
         gr.Slider(minimum=0, maximum=1, value=0.45, label="IoU threshold"),
     ],
     outputs=gr.Image(type="pil", label="Result"),
-    title="Ultralytics Gradio",
+    title="Ultralytics Gradio Application 🚀",
     description="Upload images for inference. The Ultralytics YOLOv8n model is used by default.",
     examples=[
         [ASSETS / "bus.jpg", 0.25, 0.45],
