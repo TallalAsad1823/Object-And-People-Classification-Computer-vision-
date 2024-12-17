@@ -1,3 +1,5 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license
+
 import gradio as gr
 import PIL.Image as Image
 
