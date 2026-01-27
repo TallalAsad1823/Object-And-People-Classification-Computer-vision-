@@ -1,5 +1,5 @@
 ---
-title: YOLOv8 Inference
+title: Ultralytics YOLOv8
 emoji: 🦀
 colorFrom: pink
 colorTo: indigo
